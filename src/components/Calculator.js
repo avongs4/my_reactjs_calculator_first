@@ -7,7 +7,7 @@ const Calculator = () => {
   const [result, setResult] = useState('');
 
   const handleClick = (value) => {
-    setInput(input + value);
+    setInput((prev) => prev + value);
   };
 
   const clear = () => {
@@ -15,10 +15,15 @@ const Calculator = () => {
     setResult('');
   };
 
+  const backspace = () => {
+    setInput((prev) => prev.slice(0, -1));
+  };
+
   const calculate = () => {
     try {
-      // Use eval for simplicity (in real-world apps, use a math parser)
-      setResult(eval(input)); // eslint-disable-line no-eval
+      // Remove underscores before evaluating
+      const sanitizedInput = input.replace(/_/g, '');
+      setResult(eval(sanitizedInput)); // eslint-disable-line no-eval
     } catch {
       setResult('Error');
     }
@@ -32,12 +37,13 @@ const Calculator = () => {
         <div className="result">{result}</div>
       </div>
       <div className="buttons">
-        {'123+456-789*0./'.split('').map((char, index) => (
+        {'123+456-789*0./_'.split('').map((char, index) => (
           <button key={index} onClick={() => handleClick(char)}>
             {char}
           </button>
         ))}
         <button onClick={calculate}>=</button>
+        <button onClick={backspace}>⌫</button>
         <button onClick={clear}>C</button>
       </div>
     </div>
